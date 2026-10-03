@@ -70,6 +70,50 @@ Navegadores soportados: `chrome`, `chromium`, `firefox`, `edge`, `brave`, `opera
 
 > **Nota (Windows + Chrome):** Chrome bloquea su base de datos de cookies mientras está abierto. Ciérralo antes de ejecutar el script, o usa Firefox, que no tiene ese problema.
 
+## Descargar de Alibaba
+
+Además de Instagram, este repo incluye un **plugin para yt-dlp** que permite descargar los videos de las fichas de producto de **alibaba.com**. Vive en la carpeta [`plugins/`](plugins/) y es independiente de `igdl.py`: se instala dentro de yt-dlp y luego se usa con el comando `yt-dlp`.
+
+### 1. Instalar el plugin
+
+Requiere `yt-dlp` con `curl_cffi` (para `--impersonate chrome`, que evita el captcha de Alibaba):
+
+```bash
+pip install -U "yt-dlp[default,curl-cffi]"
+```
+
+Copia el extractor a la ruta que yt-dlp reconoce (macOS/Linux):
+
+```bash
+mkdir -p ~/.config/yt-dlp/plugins/alibaba_robust/yt_dlp_plugins/extractor
+cp plugins/alibaba_robust.py ~/.config/yt-dlp/plugins/alibaba_robust/yt_dlp_plugins/extractor/
+```
+
+Verifica que cargó (debe aparecer `[alibaba:robust]`, no `[Alibaba]`):
+
+```bash
+yt-dlp -v "<url-de-alibaba>" --skip-download 2>&1 | grep -i alibaba
+```
+
+Guía de instalación completa (Windows, Docker, paquete pip): [`plugins/instalacion-plugin.md`](plugins/instalacion-plugin.md).
+
+### 2. Descargar
+
+```bash
+# Video principal de la ficha
+yt-dlp --impersonate chrome "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
+
+# Todos los videos de la ficha (empresa / SKU)
+yt-dlp --impersonate chrome --yes-playlist "<url>"
+
+# Solo metadatos y formatos disponibles
+yt-dlp --impersonate chrome -J "<url>"
+```
+
+Solo importa el **ID numérico** (10+ dígitos) al final de la URL; se aceptan los dominios `www`, `m`, `spanish`, `es` y `french`. Si Alibaba devuelve una página de verificación, agrega `--cookies-from-browser chrome` o cambia de IP/proxy.
+
+Guía de uso completa (CLI, Python, backend): [`plugins/Alibaba.md`](plugins/Alibaba.md).
+
 ## Opciones
 
 | Opción | Descripción | Default |
