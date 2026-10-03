@@ -32,7 +32,9 @@ class AlibabaRobustIE(InfoExtractor):
     IE_NAME = 'alibaba:robust'
     _VALID_URL = r'''(?x)
         https?://(?:(?:www|m|spanish|es|french)\.)?alibaba\.com/
-        (?:product-detail|product)/(?:[\w%-]+_)?(?P<id>\d{8,})(?:\.html)?
+        (?:product-detail|product)/
+        # Prefijo opcional del slug: "Nombre-Producto_", "subject-", etc.
+        (?:[^/?#]*?[-_])?(?P<id>\d{8,})(?:\.html)?
     '''
     _TESTS = [{
         'url': 'https://www.alibaba.com/product-detail/Kids-Entertainment-Bouncer-Bouncy-Castle-Waterslide_1601271126969.html',
