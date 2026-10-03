@@ -1,0 +1,29 @@
+# Descargas / salidas
+downloads/
+*.mp4
+*.m4a
+*.webm
+*.mp3
+*.part
+*.ytdl
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Editores / IDE
+.vscode/
+.idea/
+*.swp
