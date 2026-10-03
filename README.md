@@ -99,16 +99,20 @@ Guía de instalación completa (Windows, Docker, paquete pip): [`plugins/instala
 
 ### 2. Descargar
 
+Los videos se guardan en la misma carpeta `downloads/` que usa `igdl.py`, gracias a la plantilla de salida `-o "downloads/%(display_id)s_%(id)s.%(ext)s"`:
+
 ```bash
 # Video principal de la ficha
-yt-dlp --impersonate chrome "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
+yt-dlp --impersonate chrome -o "downloads/%(display_id)s_%(id)s.%(ext)s" "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
 
 # Todos los videos de la ficha (empresa / SKU)
-yt-dlp --impersonate chrome --yes-playlist "<url>"
+yt-dlp --impersonate chrome --yes-playlist -o "downloads/%(display_id)s_%(id)s.%(ext)s" "<url>"
 
-# Solo metadatos y formatos disponibles
+# Solo metadatos y formatos disponibles (no descarga)
 yt-dlp --impersonate chrome -J "<url>"
 ```
+
+> Para no repetir el `-o` cada vez, puedes dejarlo fijo en `~/.config/yt-dlp/config` (ver [`plugins/instalacion-plugin.md`](plugins/instalacion-plugin.md), sección 5).
 
 Solo importa el **ID numérico** (10+ dígitos) al final de la URL; se aceptan los dominios `www`, `m`, `spanish`, `es` y `french`. Si Alibaba devuelve una página de verificación, agrega `--cookies-from-browser chrome` o cambia de IP/proxy.
 
