@@ -72,9 +72,23 @@ Navegadores soportados: `chrome`, `chromium`, `firefox`, `edge`, `brave`, `opera
 
 ## Descargar de Alibaba
 
-Además de Instagram, este repo incluye un **plugin para yt-dlp** que permite descargar los videos de las fichas de producto de **alibaba.com**. Vive en la carpeta [`plugins/`](plugins/) y es independiente de `igdl.py`: se instala dentro de yt-dlp y luego se usa con el comando `yt-dlp`.
+`igdl.py` también descarga los videos de las fichas de producto de **alibaba.com**. Detecta la URL automáticamente, usa `--impersonate chrome` (si `curl_cffi` está instalado) y guarda el archivo en la misma carpeta `downloads/`:
 
-### 1. Instalar el plugin
+```bash
+# Instala curl_cffi una sola vez (evita el captcha de Alibaba)
+pip install curl_cffi
+
+# Descarga -> downloads/<id-ficha>_<id-video>.mp4
+python igdl.py "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
+```
+
+Usa la **URL larga** (`product-detail/..._XXXXXXXXXX.html`): los enlaces cortos (`alibaba.com/x/...`) no se resuelven, ábrelos en el navegador y copia la URL final. Si Alibaba pide verificación, agrega `--cookies-from-browser chrome`.
+
+### Extractor robusto (plugin de yt-dlp, opcional)
+
+Para fichas con varios videos (empresa/SKU) o layouts nuevos, el repo incluye el plugin `alibaba:robust` en [`plugins/`](plugins/), que se instala dentro de yt-dlp y se usa con el comando `yt-dlp` directamente.
+
+#### 1. Instalar el plugin
 
 Requiere `yt-dlp` con `curl_cffi` (para `--impersonate chrome`, que evita el captcha de Alibaba):
 
@@ -97,9 +111,9 @@ yt-dlp -v "<url-de-alibaba>" --skip-download 2>&1 | grep -i alibaba
 
 Guía de instalación completa (Windows, Docker, paquete pip): [`plugins/instalacion-plugin.md`](plugins/instalacion-plugin.md).
 
-### 2. Descargar
+#### 2. Descargar
 
-Los videos se guardan en la misma carpeta `downloads/` que usa `igdl.py`, gracias a la plantilla de salida `-o "downloads/%(display_id)s_%(id)s.%(ext)s"`:
+Pasa `-o` para que el plugin también deje los videos en `downloads/`:
 
 ```bash
 # Video principal de la ficha
