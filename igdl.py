@@ -115,8 +115,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Descarga videos/reels de Instagram y videos de fichas de Alibaba.",
     )
+    # Por defecto: carpeta downloads/ JUNTO AL SCRIPT (no al directorio actual),
+    # así el video siempre cae dentro del proyecto desde donde se ejecute.
+    default_output = Path(__file__).resolve().parent / "downloads"
     parser.add_argument("urls", nargs="+", help="Una o más URLs de Instagram o Alibaba")
-    parser.add_argument("-o", "--output", default="downloads", help="Carpeta destino (default: downloads)")
+    parser.add_argument(
+        "-o", "--output", default=str(default_output),
+        help="Carpeta destino (default: <proyecto>/downloads)",
+    )
     parser.add_argument(
         "--cookies-from-browser",
         metavar="BROWSER",
