@@ -70,6 +70,68 @@ Navegadores soportados: `chrome`, `chromium`, `firefox`, `edge`, `brave`, `opera
 
 > **Nota (Windows + Chrome):** Chrome bloquea su base de datos de cookies mientras está abierto. Ciérralo antes de ejecutar el script, o usa Firefox, que no tiene ese problema.
 
+## Descargar de Alibaba
+
+`igdl.py` también descarga los videos de las fichas de producto de **alibaba.com**. Detecta la URL automáticamente, usa `--impersonate chrome` (si `curl_cffi` está instalado) y guarda el archivo en la misma carpeta `downloads/`:
+
+```bash
+# Instala curl_cffi una sola vez (evita el captcha de Alibaba)
+pip install curl_cffi
+
+# Descarga -> downloads/<id-ficha>_<id-video>.mp4
+python igdl.py "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
+```
+
+Usa la **URL larga** (`product-detail/..._XXXXXXXXXX.html`): los enlaces cortos (`alibaba.com/x/...`) no se resuelven, ábrelos en el navegador y copia la URL final. Si Alibaba pide verificación, agrega `--cookies-from-browser chrome`.
+
+### Extractor robusto (plugin de yt-dlp, opcional)
+
+Para fichas con varios videos (empresa/SKU) o layouts nuevos, el repo incluye el plugin `alibaba:robust` en [`plugins/`](plugins/), que se instala dentro de yt-dlp y se usa con el comando `yt-dlp` directamente.
+
+#### 1. Instalar el plugin
+
+Requiere `yt-dlp` con `curl_cffi` (para `--impersonate chrome`, que evita el captcha de Alibaba):
+
+```bash
+pip install -U "yt-dlp[default,curl-cffi]"
+```
+
+Copia el extractor a la ruta que yt-dlp reconoce (macOS/Linux):
+
+```bash
+mkdir -p ~/.config/yt-dlp/plugins/alibaba_robust/yt_dlp_plugins/extractor
+cp plugins/alibaba_robust.py ~/.config/yt-dlp/plugins/alibaba_robust/yt_dlp_plugins/extractor/
+```
+
+Verifica que cargó (debe aparecer `[alibaba:robust]`, no `[Alibaba]`):
+
+```bash
+yt-dlp -v "<url-de-alibaba>" --skip-download 2>&1 | grep -i alibaba
+```
+
+Guía de instalación completa (Windows, Docker, paquete pip): [`plugins/instalacion-plugin.md`](plugins/instalacion-plugin.md).
+
+#### 2. Descargar
+
+Pasa `-o` para que el plugin también deje los videos en `downloads/`:
+
+```bash
+# Video principal de la ficha
+yt-dlp --impersonate chrome -o "downloads/%(display_id)s_%(id)s.%(ext)s" "https://www.alibaba.com/product-detail/Nombre-Del-Producto_1601271126969.html"
+
+# Todos los videos de la ficha (empresa / SKU)
+yt-dlp --impersonate chrome --yes-playlist -o "downloads/%(display_id)s_%(id)s.%(ext)s" "<url>"
+
+# Solo metadatos y formatos disponibles (no descarga)
+yt-dlp --impersonate chrome -J "<url>"
+```
+
+> Para no repetir el `-o` cada vez, puedes dejarlo fijo en `~/.config/yt-dlp/config` (ver [`plugins/instalacion-plugin.md`](plugins/instalacion-plugin.md), sección 5).
+
+Solo importa el **ID numérico** (10+ dígitos) al final de la URL; se aceptan los dominios `www`, `m`, `spanish`, `es` y `french`. Si Alibaba devuelve una página de verificación, agrega `--cookies-from-browser chrome` o cambia de IP/proxy.
+
+Guía de uso completa (CLI, Python, backend): [`plugins/Alibaba.md`](plugins/Alibaba.md).
+
 ## Opciones
 
 | Opción | Descripción | Default |
